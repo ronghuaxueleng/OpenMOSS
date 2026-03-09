@@ -52,6 +52,18 @@ async function handleLogin() {
                             :disabled="loading" @keyup.enter="handleLogin" />
                     </div>
                     <p v-if="error" class="text-sm text-destructive">{{ error }}</p>
+                    <details class="group text-center">
+                        <summary
+                            class="text-xs text-muted-foreground/60 cursor-pointer hover:text-muted-foreground transition-colors select-none list-none [&::-webkit-details-marker]:hidden">
+                            忘记密码？
+                        </summary>
+                        <div
+                            class="mt-2 rounded-lg border bg-muted/30 p-3 text-left text-xs text-muted-foreground space-y-1">
+                            <p>1. 编辑服务器上的 <code class="rounded bg-muted px-1 py-0.5">config.yaml</code></p>
+                            <p>2. 将 <code class="rounded bg-muted px-1 py-0.5">admin.password</code> 值改为新的明文密码</p>
+                            <p>3. 重启服务，系统会自动加密处理</p>
+                        </div>
+                    </details>
                     <Button type="submit" class="w-full" :disabled="loading">
                         {{ loading ? '登录中...' : '登录' }}
                     </Button>

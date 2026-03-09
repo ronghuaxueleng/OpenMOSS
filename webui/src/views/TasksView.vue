@@ -267,6 +267,36 @@ function getSubTaskBadgeClass(status: string) {
     )
 }
 
+function getSubTaskLeftBorderClass(status: string) {
+    return (
+        {
+            pending: 'border-l-slate-300',
+            assigned: 'border-l-indigo-400',
+            in_progress: 'border-l-sky-500',
+            review: 'border-l-amber-500',
+            rework: 'border-l-orange-500',
+            blocked: 'border-l-rose-500',
+            done: 'border-l-emerald-500',
+            cancelled: 'border-l-stone-400',
+        }[status] ?? 'border-l-border'
+    )
+}
+
+function getSubTaskDotClass(status: string) {
+    return (
+        {
+            pending: 'bg-slate-400',
+            assigned: 'bg-indigo-500',
+            in_progress: 'bg-sky-500 animate-pulse',
+            review: 'bg-amber-500 animate-pulse',
+            rework: 'bg-orange-500 animate-pulse',
+            blocked: 'bg-rose-500',
+            done: 'bg-emerald-500',
+            cancelled: 'bg-stone-400',
+        }[status] ?? 'bg-muted-foreground'
+    )
+}
+
 function getPriorityBadgeClass(priority: string) {
     return (
         {
@@ -787,15 +817,21 @@ async function openSubTaskDetail(subTaskId: string) {
                                     <button
                                         v-if="!selectedModuleId || item.module_name === modulePageData.items.find(m => m.id === selectedModuleId)?.name"
                                         type="button"
-                                        class="w-full rounded-lg border border-border/40 p-3 text-left transition-colors hover:bg-muted/30 animate-slide-up"
+                                        class="w-full rounded-lg border border-border/40 p-3 text-left transition-colors hover:bg-muted/30 animate-slide-up border-l-[3px]"
+                                        :class="getSubTaskLeftBorderClass(item.status)"
                                         :style="{ animationDelay: `${idx * 40}ms` }"
                                         @click="openSubTaskDetail(item.id)">
                                         <div class="flex items-start justify-between gap-2">
                                             <div class="min-w-0 flex-1">
-                                                <TextOverflowTooltip :text="item.name" as="div"
-                                                    class="text-sm font-medium leading-5" />
+                                                <div class="flex items-center gap-1.5">
+                                                    <span class="inline-block w-1.5 h-1.5 rounded-full shrink-0"
+                                                        :class="getSubTaskDotClass(item.status)" />
+                                                    <TextOverflowTooltip :text="item.name" as="div"
+                                                        class="text-sm font-medium leading-5" />
+                                                </div>
                                                 <TextOverflowTooltip :text="item.description || '暂无说明'" as="p"
-                                                    :lines="1" class="mt-0.5 text-xs text-muted-foreground leading-4" />
+                                                    :lines="1"
+                                                    class="mt-0.5 text-xs text-muted-foreground leading-4 pl-3" />
                                             </div>
                                             <Badge variant="outline" :class="getSubTaskBadgeClass(item.status)"
                                                 class="shrink-0 text-[10px] px-1.5">
@@ -803,7 +839,7 @@ async function openSubTaskDetail(subTaskId: string) {
                                             </Badge>
                                         </div>
                                         <div
-                                            class="mt-1.5 flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
+                                            class="mt-1.5 flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground pl-3">
                                             <Badge variant="outline" :class="getPriorityBadgeClass(item.priority)"
                                                 class="text-[10px] px-1.5 h-5">
                                                 {{ formatPriority(item.priority) }}

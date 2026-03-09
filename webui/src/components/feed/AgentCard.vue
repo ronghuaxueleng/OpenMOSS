@@ -19,7 +19,7 @@ const roleLabels: Record<string, string> = {
 }
 
 const roleFullName: Record<string, string> = {
-    planner: '规划师', executor: '执行者', reviewer: '审查员', patrol: '巡查员',
+    planner: '规划者', executor: '执行者', reviewer: '审查者', patrol: '巡查者',
 }
 
 const categoryColors: Record<string, string> = {

@@ -133,6 +133,48 @@ export interface AdminSubTaskListParams {
   sort_order?: string
 }
 
+// ── Agent 管理端类型 ──
+
+export interface AdminAgentItem {
+  id: string
+  name: string
+  role: string
+  description: string
+  status: string
+  total_score: number
+  rank: number
+  open_sub_task_count: number
+  assigned_count: number
+  in_progress_count: number
+  review_count: number
+  rework_count: number
+  blocked_count: number
+  last_request_at: string | null
+  last_activity_at: string | null
+  created_at: string | null
+}
+
+export interface AdminAgentDetail extends AdminAgentItem {
+  total_agents: number
+  reward_count: number
+  penalty_count: number
+  total_reward_records: number
+  done_count: number
+  cancelled_count: number
+}
+
+export interface AdminAgentListParams {
+  page?: number
+  page_size?: number
+  role?: string
+  status?: string
+  keyword?: string
+  last_request_within_days?: number
+  last_activity_within_days?: number
+  sort_by?: string
+  sort_order?: string
+}
+
 // ============================================================
 // API 模块
 // ============================================================
@@ -140,6 +182,21 @@ export interface AdminSubTaskListParams {
 export const adminApi = {
   login: (password: string) => api.post('/admin/login', { password }),
   resetKey: (agentId: string) => api.post(`/admin/agents/${agentId}/reset-key`),
+}
+
+export const adminAgentApi = {
+  list: (params?: AdminAgentListParams) =>
+    api.get<AdminPageResponse<AdminAgentItem>>('/admin/agents', { params }),
+  get: (agentId: string) =>
+    api.get<AdminAgentDetail>(`/admin/agents/${agentId}`),
+  updateStatus: (agentId: string, status: string) =>
+    api.put(`/admin/agents/${agentId}/status`, { status }),
+  scoreLogs: (agentId: string, params?: { page?: number; page_size?: number; sub_task_id?: string; sort_order?: string }) =>
+    api.get(`/admin/agents/${agentId}/score-logs`, { params }),
+  activityLogs: (agentId: string, params?: { page?: number; page_size?: number; action?: string; days?: number; sub_task_id?: string }) =>
+    api.get(`/admin/agents/${agentId}/activity-logs`, { params }),
+  requestLogs: (agentId: string, params?: { page?: number; page_size?: number; days?: number; method?: string; path_keyword?: string }) =>
+    api.get(`/admin/agents/${agentId}/request-logs`, { params }),
 }
 
 export const adminTaskApi = {
@@ -175,6 +232,113 @@ export const agentApi = {
   get: (id: string) => api.get(`/agents/${id}`),
 }
 
+// ── 管理端仪表盘类型 ──
+
+export interface DashboardCoreCards {
+  open_task_count: number
+  active_sub_task_count: number
+  review_queue_count: number
+  blocked_sub_task_count: number
+  available_agent_count: number
+  today_completed_sub_task_count: number
+}
+
+export interface DashboardSecondaryCards {
+  offline_agent_count: number
+  today_review_count: number
+  today_rejected_review_count: number
+  today_reject_rate: number
+  today_net_score_delta: number
+}
+
+export interface DashboardDistributions {
+  task_status_distribution: Record<string, number>
+  sub_task_status_distribution: Record<string, number>
+  agent_status_distribution: Record<string, number>
+  agent_role_distribution: Record<string, number>
+  review_result_distribution_7d: Record<string, number>
+}
+
+export interface DashboardOverview {
+  generated_at: string
+  review_window_days: number
+  core_cards: DashboardCoreCards
+  secondary_cards: DashboardSecondaryCards
+  distributions: DashboardDistributions
+}
+
+export interface HighlightSubTask {
+  id: string
+  task_id: string
+  task_name: string
+  name: string
+  status: string
+  assigned_agent: string | null
+  assigned_agent_name: string | null
+  updated_at: string | null
+  rework_count: number
+}
+
+export interface HighlightAgent {
+  id: string
+  name: string
+  role: string
+  status: string
+  total_score: number
+  open_sub_task_count: number
+  last_request_at: string | null
+  last_activity_at: string | null
+}
+
+export interface HighlightReview {
+  id: string
+  task_id: string
+  task_name: string
+  sub_task_id: string
+  sub_task_name: string
+  reviewer_agent: string
+  reviewer_agent_name: string | null
+  result: string
+  score: number
+  created_at: string | null
+}
+
+export interface DashboardHighlights {
+  generated_at: string
+  limit: number
+  inactive_hours: number
+  blocked_sub_tasks: HighlightSubTask[]
+  pending_review_sub_tasks: HighlightSubTask[]
+  busy_agents: HighlightAgent[]
+  low_activity_agents: HighlightAgent[]
+  recent_reviews: HighlightReview[]
+}
+
+export const adminDashboardApi = {
+  overview: () => api.get<DashboardOverview>('/admin/dashboard/overview'),
+  highlights: (params?: { limit?: number; inactive_hours?: number }) =>
+    api.get<DashboardHighlights>('/admin/dashboard/highlights', { params }),
+  trends: (params?: { days?: number }) =>
+    api.get<DashboardTrends>('/admin/dashboard/trends', { params }),
+}
+
+export interface TrendPoint { date: string; count: number }
+export interface ReviewTrendPoint { date: string; total: number; approved: number; rejected: number }
+export interface ScoreTrendPoint { date: string; positive_score_delta: number; negative_score_delta: number; net_score_delta: number }
+
+export interface DashboardTrends {
+  generated_at: string
+  days: number
+  start_date: string
+  end_date: string
+  sub_task_created_trend: TrendPoint[]
+  sub_task_completed_trend: TrendPoint[]
+  review_trend: ReviewTrendPoint[]
+  score_delta_trend: ScoreTrendPoint[]
+  request_trend: TrendPoint[]
+  activity_trend: TrendPoint[]
+}
+
 export const scoreApi = {
   leaderboard: () => api.get('/scores/leaderboard'),
   agentScore: (agentId: string) => api.get(`/scores/${agentId}`),
@@ -184,15 +348,161 @@ export const scoreApi = {
     api.post('/scores/adjust', data),
 }
 
+// ── 管理端积分类型 ──
+
+export interface AdminScoreSummary {
+  total_agents: number
+  positive_score_agents: number
+  zero_score_agents: number
+  negative_score_agents: number
+  top_score: number
+  average_score: number
+  last_score_at: string | null
+}
+
+export interface AdminScoreLeaderboardItem {
+  rank: number
+  agent_id: string
+  agent_name: string
+  role: string
+  status: string
+  total_score: number
+  reward_count: number
+  penalty_count: number
+  total_records: number
+  last_score_at: string | null
+  created_at: string | null
+}
+
+export interface AdminScoreLeaderboardParams {
+  page?: number
+  page_size?: number
+  role?: string
+  status?: string
+  keyword?: string
+  score_min?: number
+  score_max?: number
+  sort_by?: string
+  sort_order?: string
+}
+
+export interface AdminScoreLogItem {
+  id: string
+  agent_id: string
+  agent_name: string
+  sub_task_id: string | null
+  reason: string
+  score_delta: number
+  created_at: string | null
+}
+
+export interface AdminScoreLogParams {
+  page?: number
+  page_size?: number
+  agent_id?: string
+  sub_task_id?: string
+  score_sign?: string
+  keyword?: string
+  sort_order?: string
+}
+
+export const adminScoreApi = {
+  summary: () =>
+    api.get<AdminScoreSummary>('/admin/scores/summary'),
+  leaderboard: (params?: AdminScoreLeaderboardParams) =>
+    api.get<AdminPageResponse<AdminScoreLeaderboardItem>>('/admin/scores/leaderboard', { params }),
+  logs: (params?: AdminScoreLogParams) =>
+    api.get<AdminPageResponse<AdminScoreLogItem>>('/admin/scores/logs', { params }),
+  adjust: (data: { agent_id: string; score_delta: number; reason: string; sub_task_id?: string }) =>
+    api.post('/admin/scores/adjust', data),
+}
+
 export const reviewApi = {
   list: (params?: { sub_task_id?: string; page?: number; page_size?: number }) =>
     api.get('/review-records', { params }),
   get: (id: string) => api.get(`/review-records/${id}`),
 }
 
+// ── 管理端审查记录类型 ──
+
+export interface AdminReviewListItem {
+  id: string
+  task_id: string
+  task_name: string
+  module_id: string | null
+  module_name: string | null
+  sub_task_id: string
+  sub_task_name: string
+  reviewer_agent: string
+  reviewer_agent_name: string | null
+  round: number
+  result: string
+  score: number
+  issues: string
+  comment: string
+  rework_agent: string | null
+  rework_agent_name: string | null
+  created_at: string | null
+}
+
+export interface AdminReviewDetail extends AdminReviewListItem {
+  sub_task_description: string
+  sub_task_deliverable: string
+  sub_task_acceptance: string
+}
+
+export interface AdminReviewParams {
+  page?: number
+  page_size?: number
+  task_id?: string
+  sub_task_id?: string
+  reviewer_agent?: string
+  result?: string
+  keyword?: string
+  days?: number
+  sort_order?: string
+}
+
+export const adminReviewApi = {
+  list: (params?: AdminReviewParams) =>
+    api.get<AdminPageResponse<AdminReviewListItem>>('/admin/review-records', { params }),
+  get: (id: string) =>
+    api.get<AdminReviewDetail>(`/admin/review-records/${id}`),
+}
+
 export const logApi = {
   list: (params?: { sub_task_id?: string; action?: string; days?: number; limit?: number }) =>
     api.get('/logs', { params }),
+}
+
+// ── 管理端活动日志类型 ──
+
+export interface AdminActivityLogItem {
+  id: string
+  agent_id: string
+  agent_name: string
+  agent_role: string
+  sub_task_id: string | null
+  action: string
+  summary: string
+  session_id: string | null
+  created_at: string | null
+}
+
+export interface AdminLogParams {
+  page?: number
+  page_size?: number
+  agent_id?: string
+  action?: string
+  sub_task_id?: string
+  keyword?: string
+  days?: number
+  sort_order?: string
+}
+
+export const adminLogApi = {
+  list: (params?: AdminLogParams) =>
+    api.get<AdminPageResponse<AdminActivityLogItem>>('/admin/logs', { params }),
 }
 
 export const ruleApi = {
@@ -205,4 +515,31 @@ export const feedApi = {
     api.get('/feed/logs', { params }),
   agents: () => api.get('/feed/agents'),
   agentSummary: () => api.get('/feed/agent-summary'),
+}
+
+export const setupApi = {
+  status: () => api.get<{ initialized: boolean }>('/setup/status'),
+  initialize: (data: {
+    admin_password: string
+    current_password?: string
+    project_name: string
+    workspace_root: string
+    registration_token?: string
+    allow_registration?: boolean
+    notification?: {
+      enabled: boolean
+      channels: string[]
+      events: string[]
+    }
+  }) => api.post('/setup/initialize', data),
+}
+
+export const adminConfigApi = {
+  get: () => api.get('/admin/config'),
+  update: (data: Record<string, unknown>) => api.put('/admin/config', data),
+  updatePassword: (oldPassword: string, newPassword: string) =>
+    api.put('/admin/config/password', {
+      old_password: oldPassword,
+      new_password: newPassword,
+    }),
 }

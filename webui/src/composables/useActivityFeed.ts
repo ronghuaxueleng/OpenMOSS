@@ -81,10 +81,10 @@ const ROUTE_RULES: RouteRule[] = [
 ]
 
 const ROLE_LABELS: Record<string, string> = {
-  planner: '规划师',
+  planner: '规划者',
   executor: '执行者',
-  reviewer: '审查员',
-  patrol: '巡查员',
+  reviewer: '审查者',
+  patrol: '巡查者',
 }
 
 // query 参数中文标签

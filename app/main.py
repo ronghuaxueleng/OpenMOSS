@@ -14,6 +14,11 @@ from app.auth.dependencies import get_current_agent
 from app.routers import (
     admin,
     admin_agents,
+    admin_config,
+    admin_dashboard,
+    admin_logs,
+    admin_reviews,
+    admin_scores,
     admin_tasks,
     agents,
     feed,
@@ -21,6 +26,7 @@ from app.routers import (
     review_records,
     rules,
     scores,
+    setup,
     sub_tasks,
     tasks,
 )
@@ -127,6 +133,11 @@ API_PREFIX = "/api"
 app.include_router(agents.router, prefix=API_PREFIX)
 app.include_router(admin.router, prefix=API_PREFIX)
 app.include_router(admin_agents.router, prefix=API_PREFIX)
+app.include_router(admin_config.router, prefix=API_PREFIX)
+app.include_router(admin_dashboard.router, prefix=API_PREFIX)
+app.include_router(admin_logs.router, prefix=API_PREFIX)
+app.include_router(admin_reviews.router, prefix=API_PREFIX)
+app.include_router(admin_scores.router, prefix=API_PREFIX)
 app.include_router(admin_tasks.router, prefix=API_PREFIX)
 app.include_router(tasks.router, prefix=API_PREFIX)
 app.include_router(sub_tasks.router, prefix=API_PREFIX)
@@ -135,6 +146,7 @@ app.include_router(review_records.router, prefix=API_PREFIX)
 app.include_router(scores.router, prefix=API_PREFIX)
 app.include_router(logs.router, prefix=API_PREFIX)
 app.include_router(feed.router, prefix=API_PREFIX)
+app.include_router(setup.router, prefix=API_PREFIX)
 
 
 # ============================================================

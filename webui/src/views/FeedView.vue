@@ -135,11 +135,15 @@ onUnmounted(() => { if (pollTimer) clearInterval(pollTimer) })
 
         <!-- 未启用 -->
         <div v-else-if="!enabled"
-            class="flex-1 flex flex-col items-center justify-center gap-2 text-muted-foreground/60">
-            <Lock class="w-8 h-8 mb-1" />
-            <p class="text-sm font-medium text-foreground/80">活动流未启用</p>
-            <p class="text-xs">config.yaml → <code
-                    class="bg-muted px-1 py-0.5 rounded text-[11px]">webui.public_feed: true</code></p>
+            class="flex-1 flex flex-col items-center justify-center gap-3 text-muted-foreground/60 px-6">
+            <Lock class="w-10 h-10 mb-1" />
+            <p class="text-base font-semibold text-foreground/80">活动流展示页尚未开启</p>
+            <p class="text-sm text-muted-foreground/50 text-center max-w-sm leading-relaxed">
+                开启后，所有 Agent 的 API 活动将在此页面实时展示，
+                无需登录即可查看。
+            </p>
+            <p class="text-xs text-muted-foreground/40 mt-1">在后台设置中开启，或修改 <code
+                    class="bg-muted px-1.5 py-0.5 rounded text-[11px]">config.yaml → webui.public_feed: true</code></p>
         </div>
 
         <!-- 正常 -->
@@ -149,15 +153,15 @@ onUnmounted(() => { if (pollTimer) clearInterval(pollTimer) })
                 <div class="flex items-center gap-2 min-w-0">
                     <div
                         class="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground text-[10px] font-bold shrink-0">
-                        M</div>
-                    <span class="text-sm font-medium truncate">Activity Feed</span>
+                        F</div>
+                    <span class="text-sm font-medium truncate">活动流</span>
                     <span class="text-[10px] text-muted-foreground/40 tabular-nums">{{ filteredActivities.length
-                    }}</span>
+                        }}</span>
 
                     <template v-if="selectedAgentName">
                         <Separator orientation="vertical" class="h-3 mx-0.5 opacity-30" />
                         <span class="text-[11px] text-muted-foreground truncate max-w-[100px]">{{ selectedAgentName
-                        }}</span>
+                            }}</span>
                         <button class="text-muted-foreground/40 hover:text-foreground" @click="selectedAgentId = null">
                             <X class="w-2.5 h-2.5" />
                         </button>
@@ -213,7 +217,8 @@ onUnmounted(() => { if (pollTimer) clearInterval(pollTimer) })
                         <div v-if="!switchingAgent && filteredActivities.length === 0"
                             class="flex flex-col items-center justify-center py-20 text-muted-foreground/40">
                             <Inbox class="w-6 h-6 mb-2" />
-                            <p class="text-xs">暂无记录</p>
+                            <p class="text-xs">暂无活动记录</p>
+                            <p class="text-[10px] mt-1 text-muted-foreground/30">Agent 发起 API 请求后，活动会自动出现在这里</p>
                         </div>
                     </div>
                 </div>
@@ -248,10 +253,10 @@ onUnmounted(() => { if (pollTimer) clearInterval(pollTimer) })
                 <span class="flex items-center gap-1">
                     <span class="inline-block w-1 h-1 rounded-full"
                         :class="paused ? 'bg-amber-400' : 'bg-emerald-400 animate-pulse'" />
-                    {{ paused ? 'paused' : 'live' }}
+                    {{ paused ? '已暂停' : '实时更新中' }}
                 </span>
                 <span>·</span>
-                <span class="tabular-nums">{{ agentSummaries.length }} agents</span>
+                <span class="tabular-nums">{{ agentSummaries.length }} 个 Agent</span>
             </footer>
         </template>
     </div>

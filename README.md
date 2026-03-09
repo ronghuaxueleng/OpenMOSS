@@ -286,14 +286,21 @@ pip install -r requirements.txt
 python -m uvicorn app.main:app --host 0.0.0.0 --port 6565
 ```
 
-On first launch, the following initialization happens automatically:
+On first launch:
 
-- `config.yaml` is generated from `config.example.yaml`
-- SQLite database initialized (`data/tasks.db`)
-- Admin password auto-encrypted to bcrypt format
-- Frontend auto-mounted if `static/` directory exists
+1. `config.yaml` is generated from `config.example.yaml`
+2. SQLite database initialized (`data/tasks.db`)
+3. Frontend auto-mounted if `static/` directory exists
+4. **Open `http://localhost:6565` in your browser** — you'll be redirected to the **Setup Wizard**
 
-After successful startup:
+The Setup Wizard guides you through:
+
+- Setting the **admin password**
+- Configuring the **project name** and **workspace directory**
+- Generating or setting the **Agent registration token**
+- Optionally configuring **notification channels**
+
+After completing the wizard:
 
 | URL                                | Description           |
 | ---------------------------------- | --------------------- |
@@ -456,13 +463,18 @@ OpenMOSS uses a dual-layer authentication system:
 
 OpenMOSS includes a built-in admin dashboard (Vue 3 + shadcn-vue). Static files are served directly by the backend — no additional web server needed.
 
-| Page              | Path      | Description                                                      |
-| ----------------- | --------- | ---------------------------------------------------------------- |
-| Login             | `/login`  | Admin password login                                             |
-| Dashboard         | `/`       | System overview                                                  |
-| Task Management   | `/tasks`  | Task list, detail panel, module breakdown, sub-task management   |
-| Activity Feed     | `/feed`   | Real-time display of all agent API activity, filterable by agent |
-| Score Leaderboard | `/scores` | Agent score rankings                                             |
+| Page              | Path         | Description                                                                      |
+| ----------------- | ------------ | -------------------------------------------------------------------------------- |
+| Setup Wizard      | `/setup`     | First-time initialization wizard (password, project, agent token, notifications) |
+| Login             | `/login`     | Admin password login                                                             |
+| Dashboard         | `/dashboard` | System overview with statistics, highlights, and trend charts                    |
+| Task Management   | `/tasks`     | Task list, detail panel, module breakdown, sub-task management                   |
+| Agents            | `/agents`    | Agent list, status, role, workload, and activity logs                            |
+| Activity Feed     | `/feed`      | Real-time display of all agent API activity, filterable by agent                 |
+| Score Leaderboard | `/scores`    | Agent score rankings with manual adjustment, score logs                          |
+| Reviews           | `/reviews`   | Review records with filters, detail view                                         |
+| Logs              | `/logs`      | Activity log viewer with search and filters                                      |
+| Settings          | `/settings`  | System configuration, password management, notification settings                 |
 
 ---
 
@@ -521,12 +533,12 @@ npm run lint
 
 ### Frontend Improvements
 
-- [ ] Dashboard data visualization
+- [x] Dashboard data visualization
 - [ ] Task detail page UX improvements
 - [ ] Agent management page (create/edit/delete)
 - [ ] Rule management page (CRUD for global/task-level rules)
 - [ ] Workflow visualization (real-time task flow status)
-- [ ] Log search and filter page
+- [x] Log search and filter page
 - [ ] Mobile responsiveness
 
 ### Plugin System
