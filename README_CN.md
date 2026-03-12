@@ -273,7 +273,7 @@ OpenMOSS/
 |   +-- local-web-search/           # 本地网关 Web 搜索 Skill ⚙️
 |
 |-- rules/                          # 全局规则模板
-|-- tests/                          # 测试用例
+|-- tests/                          # 测试用例（可选，贡献测试时添加）
 |-- docs/                           # 设计文档
 |-- config.example.yaml             # 配置文件模板
 |-- requirements.txt                # Python 依赖
@@ -520,7 +520,7 @@ pip install -r requirements.txt
 python -m uvicorn app.main:app --host 0.0.0.0 --port 6565 --reload
 
 # 运行测试
-python -m pytest tests/
+python -m pytest
 ```
 
 ### 前端开发
