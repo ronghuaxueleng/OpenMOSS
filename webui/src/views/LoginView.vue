@@ -37,11 +37,11 @@ async function handleLogin() {
 </script>
 
 <template>
-    <div class="flex min-h-screen items-center justify-center bg-background">
-        <Card class="w-full max-w-sm">
+    <div class="login-bg flex min-h-screen items-center justify-center bg-background">
+        <Card class="w-full max-w-sm shadow-[var(--shadow-lg)] rounded-2xl border-border/50">
             <CardHeader class="text-center">
                 <div
-                    class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground text-xl font-bold">
+                    class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground text-xl font-bold shadow-[var(--shadow-sm)]">
                     M
                 </div>
                 <CardTitle class="text-2xl">OpenMOSS</CardTitle>
@@ -52,7 +52,8 @@ async function handleLogin() {
                     <div class="space-y-2">
                         <Label for="password">管理员密码</Label>
                         <Input id="password" v-model="password" type="password" placeholder="请输入管理员密码"
-                            :disabled="loading" @keyup.enter="handleLogin" />
+                            :disabled="loading" @keyup.enter="handleLogin"
+                            class="focus:ring-2 focus:ring-primary/20 transition-shadow duration-150" />
                     </div>
                     <p v-if="error" class="text-sm text-destructive">{{ error }}</p>
                     <details class="group text-center">
@@ -67,7 +68,9 @@ async function handleLogin() {
                             <p>3. 重启服务，系统会自动加密处理</p>
                         </div>
                     </details>
-                    <Button type="submit" class="w-full" :disabled="loading">
+                    <Button type="submit"
+                        class="w-full transition-transform duration-150 hover:scale-[1.02] active:scale-[0.98]"
+                        :disabled="loading">
                         {{ loading ? '登录中...' : '登录' }}
                     </Button>
                 </form>

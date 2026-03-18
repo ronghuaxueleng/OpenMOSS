@@ -293,7 +293,7 @@ const trendCards = computed<TrendCard[]>(() => {
             <!-- ─── 核心指标卡片 ─── -->
             <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 <Card v-for="(card, idx) in coreCards" :key="card.title"
-                    class="animate-slide-up border-border/40 hover:border-border/70 transition-colors"
+                    class="animate-slide-up border-border/40 hover:border-border/70 hover:shadow-[var(--shadow-md)] hover:scale-[1.02] transition-all duration-200 cursor-default"
                     :style="{ animationDelay: `${idx * 50}ms` }">
                     <CardContent class="flex items-center gap-3 p-4">
                         <div class="rounded-lg p-2.5" :class="card.bg">
@@ -493,7 +493,7 @@ const trendCards = computed<TrendCard[]>(() => {
                     </div>
                     <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                         <Card v-for="(card, idx) in trendCards" :key="card.title"
-                            class="border-border/40 animate-slide-up overflow-hidden"
+                            class="border-border/40 animate-slide-up overflow-hidden hover:shadow-[var(--shadow-md)] hover:scale-[1.02] transition-all duration-200 cursor-default"
                             :style="{ animationDelay: `${800 + idx * 50}ms` }">
                             <CardContent class="p-4 pb-0">
                                 <div class="flex items-center justify-between mb-1">
@@ -657,22 +657,6 @@ const trendCards = computed<TrendCard[]>(() => {
 </template>
 
 <style scoped>
-@keyframes slide-up-fade-in {
-    from {
-        opacity: 0;
-        transform: translateY(12px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.animate-slide-up {
-    animation: slide-up-fade-in 0.35s ease-out both;
-}
-
 /* Sparkline draw-in animation */
 @keyframes sparkline-draw {
     from {
