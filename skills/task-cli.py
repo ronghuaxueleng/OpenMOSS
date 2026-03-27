@@ -11,12 +11,26 @@ import sys
 import json
 import argparse
 import requests
+from pathlib import Path
 
 # ============================================================
 # 配置：修改为你的任务调度服务地址
 # ============================================================
 BASE_URL = "http://192.168.31.128:6565"
 CLI_VERSION = 2  # CLI 版本号，更新后递增
+
+
+def _load_default_key():
+    """未显式传 --key 时，尝试从当前工作目录的 OPENMOSS-AGENT.env 读取。"""
+    env_path = Path.cwd() / "OPENMOSS-AGENT.env"
+    if not env_path.exists():
+        return None
+    for line in env_path.read_text(encoding="utf-8").splitlines():
+        if line.startswith("OPENMOSS_API_KEY="):
+            value = line.split("=", 1)[1].strip()
+            if value and value != "__OPENMOSS_API_KEY__":
+                return value
+    return None
 
 
 # ============================================================
@@ -821,6 +835,8 @@ def main():
         return
 
     # 其他命令需要 key
+    if not args.key:
+        args.key = _load_default_key()
     if not args.key:
         print("❌ 缺少 --key 参数，请提供 API Key")
         sys.exit(1)
