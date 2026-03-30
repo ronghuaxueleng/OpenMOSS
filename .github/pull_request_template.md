@@ -31,6 +31,9 @@
 
 ## Checklist
 
+- [ ] Based on the latest `dev` branch (not `main`) — see [CONTRIBUTING.md](../CONTRIBUTING.md)
+- [ ] Line endings are LF (`\n`), no CRLF (`\r\n`) — see [CONTRIBUTING.md](../CONTRIBUTING.md)
+- [ ] No build artifacts (`static/`), data files (`data/`), or sensitive configs (`config.yaml`)
 - [ ] Self-tested and working
 - [ ] No hardcoded secrets, tokens, or internal addresses
 - [ ] Commit messages follow [Conventional Commits](https://www.conventionalcommits.org/)
