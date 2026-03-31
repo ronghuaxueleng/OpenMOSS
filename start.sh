@@ -178,6 +178,7 @@ PYTHONUNBUFFERED=1 nohup "$VENV_DIR/bin/python" -m uvicorn app.main:app \
     > "$LOG_DIR/server.log" 2>&1 &
 
 SERVER_PID=$!
+disown $SERVER_PID 2>/dev/null || true
 echo $SERVER_PID > "$PID_FILE"
 
 # ---------- 等待服务就绪 ----------
@@ -197,7 +198,7 @@ for i in $(seq 1 30); do
     fi
 
     # 检查 HTTP 是否就绪
-    if curl -sf "http://localhost:$PORT/api/health" > /dev/null 2>&1; then
+    if curl -sf --connect-timeout 2 --max-time 3 "http://127.0.0.1:$PORT/api/health" > /dev/null 2>&1; then
         echo ""
         echo ""
         info "✅ OpenMOSS 已启动！"
